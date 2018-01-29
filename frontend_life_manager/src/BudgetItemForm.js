@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import { MenuItem, RaisedButton } from 'material-ui';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
+import { Row, Column } from 'react-flexbox-grid';
 
 export default class BudgetItemForm extends Component {
 
@@ -50,10 +51,10 @@ export default class BudgetItemForm extends Component {
 	}
 
 	handleChange = (attribute) => {
-		return (event) => {
-			this.setState({
-				attribute: event.target.value
-			});
+		return (event, value) => {
+			var obj = {};
+			obj[attribute] = value;
+			this.setState(obj);
 		}
 	}
 
@@ -74,41 +75,51 @@ export default class BudgetItemForm extends Component {
 				onSubmit={this.handleSubmit}
 				onError={errors => console.log(errors)}
 			>
-				<TextValidator
-                    floatingLabelText="Amount"
-                    onChange={this.handleChange('amount')}
-                    name="amount"
-                    value={this.state.amount}
-                    validators={['required',]}
-                    errorMessages={['this field is required',]}
-                />
-                <TextValidator
-                    floatingLabelText="Description"
-                    onChange={this.handleChange('description')}
-                    name="description"
-                    value={this.state.amount}
-                    validators={['required',]}
-                    errorMessages={['this field is required',]}
-                />
-                <TextValidator
-                    floatingLabelText="Party"
-                    onChange={this.handleChange('party')}
-                    name="party"
-                    value={this.state.party}
-                    validators={['required',]}
-                    errorMessages={['this field is required',]}
-                />
-                <SelectValidator 
-                	floatingLabelText="Category"
-                    onChange={this.handleChange('category')}
-                    name="category"
-                    value={this.state.category}
-                    validators={['required',]}
-                    errorMessages={['this field is required',]}
-                >
-                	{ this.renderCategoryOptions() }
-                </SelectValidator>
-                <RaisedButton type="submit" />
+				<Row>
+					<TextValidator
+	                    floatingLabelText="Amount"
+	                    onChange={this.handleChange('amount')}
+	                    name="amount"
+	                    value={this.state.amount}
+	                    validators={['required']}
+	                    errorMessages={'this field is required'}
+	                />
+                </Row>
+                <Row>
+	                <TextValidator
+	                    floatingLabelText="Description"
+	                    onChange={this.handleChange('description')}
+	                    name="description"
+	                    value={this.state.description}
+	                    validators={['required']}
+	                    errorMessages={'this field is required'}
+	                />
+                </Row>
+                <Row>
+	                <TextValidator
+	                    floatingLabelText="Party"
+	                    onChange={this.handleChange('party')}
+	                    name="party"
+	                    value={this.state.party}
+	                    validators={['required']}
+	                    errorMessages={'this field is required'}
+	                />
+                </Row>
+                <Row>
+	                <SelectValidator 
+	                	floatingLabelText="Category"
+	                    onChange={this.handleChange('category')}
+	                    name="category"
+	                    value={this.state.category}
+	                    validators={['required']}
+	                    errorMessages={'this field is required'}
+	                >
+	                	{ this.renderCategoryOptions() }
+	                </SelectValidator>
+                </Row>
+                <Row>
+                	<RaisedButton type="submit" label="Submit" primary={true} />
+                </Row>
 			
 			</ValidatorForm>
 		);
