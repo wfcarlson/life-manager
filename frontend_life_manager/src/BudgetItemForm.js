@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import { MenuItem, RaisedButton } from 'material-ui';
+import { RadioButton, RadioButtonGroup, MenuItem, RaisedButton } from 'material-ui';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
-import { Row, Column } from 'react-flexbox-grid';
+import { Row, Col } from 'react-flexbox-grid';
 
 export default class BudgetItemForm extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			amount: props.amount,
-			time: props.time,
-			category: props.category,
-			description: props.description,
-			party: props.party,
-			category_options: []
+			amount: "",
+			time: "",
+			category: "",
+			description: "",
+			party: "",
+			type: "expense",
+			category_options: [],
 		};
-
-		this.getCategoryOptions();
 	}
 
 	componentWillReceiveProps(props) {
@@ -28,26 +26,9 @@ export default class BudgetItemForm extends Component {
 			category: props.category,
 			description: props.description,
 			party: props.party,
+			type: props.party,
 			category_options: props.category_options,
 		})
-
-		this.getCategoryOptions();
-	}
-
-	getCategoryOptions = () => {
-		var data = {
-			method: "GET",
-			headers: {
-
-			},
-			mode: 'cors'
-		};
-
-		fetch('http://localhost:8000/api/categories/', data).then((response) => {
-			return response.json();
-		}).then((result) => {
-			this.setState({ category_options: result });
-		}).catch(err => { alert(err) })
 	}
 
 	handleChange = (attribute) => {
@@ -58,8 +39,50 @@ export default class BudgetItemForm extends Component {
 		}
 	}
 
-	handleSubmit = () => {
+	handleNumberChange = (attribute) => {
+		return (event, value) => {
+			var valid = value.match(/^(\d*\.)?\d*$/);
+			if (valid != null && valid.length == 2){
+				console.log(valid)
+				var obj = {};
+				obj[attribute] = value;
+				this.setState(obj);
+			}
+		}
+	}
 
+	handleSelectChange = (attribute) => {
+		return (event, index, value) => {
+			var obj = {};
+			obj[attribute] = value;
+			this.setState(obj);
+		}
+	}
+
+	handleSubmit = () => {
+		var budgetItem = {
+			amount: this.state.amount,
+			category: this.state.category,
+			description: this.state.description,
+			party: this.state.party,
+			time: new Date(Date.now()).toJSON(),
+		}
+
+		var data = {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			mode: 'cors',
+			body: JSON.stringify(budgetItem),
+		};
+
+		if (this.state.type == 'expense') {
+			fetch('http://localhost:8000/api/expenses/', data).catch(err => { console.log(err) });
+		}
+		else if (this.state.type ==' income') {
+			fetch('http://localhost:8000/api/incomes/', data).catch(err => { console.log(err) });
+		}
 	}
 
 	renderCategoryOptions = () => {
@@ -76,9 +99,15 @@ export default class BudgetItemForm extends Component {
 				onError={errors => console.log(errors)}
 			>
 				<Row>
+					<RadioButtonGroup name="budget_item_type" defaultSelected="expense" onChange={this.handleChange('type')}>
+						<RadioButton name="income" value="income" label="Income" />
+						<RadioButton name="expense" value="expense" label="Expense" />
+					</RadioButtonGroup>
+				</Row>
+				<Row>
 					<TextValidator
 	                    floatingLabelText="Amount"
-	                    onChange={this.handleChange('amount')}
+	                    onChange={this.handleNumberChange('amount')}
 	                    name="amount"
 	                    value={this.state.amount}
 	                    validators={['required']}
@@ -108,7 +137,7 @@ export default class BudgetItemForm extends Component {
                 <Row>
 	                <SelectValidator 
 	                	floatingLabelText="Category"
-	                    onChange={this.handleChange('category')}
+	                    onChange={this.handleSelectChange('category')}
 	                    name="category"
 	                    value={this.state.category}
 	                    validators={['required']}
