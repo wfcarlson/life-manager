@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { RadioButton, RadioButtonGroup, MenuItem, RaisedButton } from 'material-ui';
+import DatePicker from 'material-ui/DatePicker';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
-import { Row, Col } from 'react-flexbox-grid';
+import { Row } from 'react-flexbox-grid';
 
 export default class BudgetItemForm extends Component {
 
@@ -10,28 +11,32 @@ export default class BudgetItemForm extends Component {
 		super(props);
 		this.state = {
 			amount: "",
-			time: "",
+			time: new Date(Date.now()),
 			category: "",
 			description: "",
 			party: "",
 			type: "expense",
-			category_options: [],
+			income_category_options: [],
+			expense_category_options: [],
 		};
 	}
 
 	componentWillReceiveProps(props) {
 		this.setState({
-			amount: props.amount,
-			time: props.time,
-			category: props.category,
-			description: props.description,
-			party: props.party,
-			type: props.party,
-			category_options: props.category_options,
+			income_category_options: props.income_category_options,
+			expense_category_options: props.expense_category_options,
 		})
 	}
 
 	handleChange = (attribute) => {
+		if (attribute === "type"){
+			return (event, value) => {
+			var obj = {};
+			obj[attribute] = value;
+			obj['category'] = "";
+			this.setState(obj);
+		}
+		}
 		return (event, value) => {
 			var obj = {};
 			obj[attribute] = value;
@@ -42,8 +47,7 @@ export default class BudgetItemForm extends Component {
 	handleNumberChange = (attribute) => {
 		return (event, value) => {
 			var valid = value.match(/^(\d*\.)?\d*$/);
-			if (valid != null && valid.length == 2){
-				console.log(valid)
+			if (valid != null && valid.length === 2){
 				var obj = {};
 				obj[attribute] = value;
 				this.setState(obj);
@@ -60,12 +64,13 @@ export default class BudgetItemForm extends Component {
 	}
 
 	handleSubmit = () => {
+		console.log(this.state.time);
 		var budgetItem = {
 			amount: this.state.amount,
 			category: this.state.category,
 			description: this.state.description,
 			party: this.state.party,
-			time: new Date(Date.now()).toJSON(),
+			time: (this.state.time ? this.state.time : new Date(Date.now()).toJSON()),
 		}
 
 		var data = {
@@ -77,18 +82,29 @@ export default class BudgetItemForm extends Component {
 			body: JSON.stringify(budgetItem),
 		};
 
-		if (this.state.type == 'expense') {
-			fetch('http://localhost:8000/api/expenses/', data).catch(err => { console.log(err) });
-		}
-		else if (this.state.type ==' income') {
-			fetch('http://localhost:8000/api/incomes/', data).catch(err => { console.log(err) });
-		}
+		fetch('http://localhost:8000/api/' + this.state.type + 's/', data)
+			.then(() => { this.props.update(); })
+			.catch(err => { console.log(err) });
+	
+	}
+
+	formatDate = (date) => {
+		var month = "" + (date.getMonth() + 1);
+		if (month.length === 1){
+			month = "0" + month;
+		}	
+
+		return "" + month + "/" + date.getDate() + "/" + date.getYear();
 	}
 
 	renderCategoryOptions = () => {
-		return this.state.category_options.map((option) => {
+		return (this.state.type === "income") ? (this.state.income_category_options.map((option) => {
 			return (<MenuItem key={option.id} value={option.id} primaryText={option.name} />);
-		});
+		}))
+		:
+		(this.state.expense_category_options.map((option) => {
+			return (<MenuItem key={option.id} value={option.id} primaryText={option.name} />);
+		}));
 	}
 
 	render() {
@@ -103,6 +119,15 @@ export default class BudgetItemForm extends Component {
 						<RadioButton name="income" value="income" label="Income" />
 						<RadioButton name="expense" value="expense" label="Expense" />
 					</RadioButtonGroup>
+				</Row>
+				<Row>
+					<DatePicker
+						hintText="Date"
+						name="time"
+						value={this.state.time}
+						onChange={this.handleChange('time')}
+						formatDate={this.formatDate}
+					/>
 				</Row>
 				<Row>
 					<TextValidator
@@ -135,7 +160,7 @@ export default class BudgetItemForm extends Component {
 	                />
                 </Row>
                 <Row>
-	                <SelectValidator 
+                	<SelectValidator 
 	                	floatingLabelText="Category"
 	                    onChange={this.handleSelectChange('category')}
 	                    name="category"
@@ -149,7 +174,6 @@ export default class BudgetItemForm extends Component {
                 <Row>
                 	<RaisedButton type="submit" label="Submit" primary={true} />
                 </Row>
-			
 			</ValidatorForm>
 		);
 	}

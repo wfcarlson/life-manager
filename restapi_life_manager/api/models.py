@@ -8,16 +8,24 @@ class Category(models.Model):
 	name = models.CharField(max_length=50, null=False, blank=False)
 
 	class Meta:
-		verbose_name_plural = "Categories"
+		abstract = True
 
 	def __str__(self):
 		return self.name
 
+class IncomeCategory(Category):
+	class Meta:
+		verbose_name_plural = "Income Categories"
+
+class ExpenseCategory(Category):
+	class Meta:
+		verbose_name_plural = "Expense Categories"
+
+
 
 class BudgetItem(models.Model):
 	amount = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
-	time = models.DateTimeField(auto_now=True, blank=False, null=False)
-	category = models.ForeignKey(Category, blank=False, null=False)
+	time = models.DateTimeField(blank=False, null=False)
 	description = models.CharField(max_length=250, null=False, blank=False)
 	party = models.CharField(max_length=50, null=False, blank=False)
 
@@ -26,11 +34,15 @@ class BudgetItem(models.Model):
 
 
 class Expense(BudgetItem):
+	category = models.ForeignKey(ExpenseCategory, blank=False, null=False)
+
 	def __str__(self):
-		return "" + self.party + " - " + self.amount
+		return "" + self.party + " - $" + str(self.amount)
 
 
 class Income(BudgetItem):
+	category = models.ForeignKey(IncomeCategory, blank=False, null=False)
+
 	def __str__(self):
-		return "" + self.party + " - " + self.amount
+		return "" + self.party + " - $" + str(self.amount)
 

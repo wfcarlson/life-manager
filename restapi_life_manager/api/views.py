@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from models import Expense, Income, Category
-from serializers import ExpenseSerializer, IncomeSerializer, CategorySerializer
+from models import Expense, Income, ExpenseCategory, IncomeCategory
+from serializers import ExpenseSerializer, IncomeSerializer, ExpenseCategorySerializer, IncomeCategorySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -39,9 +39,16 @@ class IncomeView(APIView):
     		return Response(serializer.data, status=status.HTTP_201_CREATED)
     	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CategoryView(APIView):
+class ExpenseCategoryView(APIView):
 
     def get(self, request, format=None):
-        categories = Category.objects.all()
-        serializer = CategorySerializer(categories, many=True)
+        categories = ExpenseCategory.objects.all()
+        serializer = ExpenseCategorySerializer(categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class IncomeCategoryView(APIView):
+
+    def get(self, request, format=None):
+        categories = IncomeCategory.objects.all()
+        serializer = IncomeCategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

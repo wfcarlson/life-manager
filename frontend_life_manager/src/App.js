@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import BudgetItemForm from './BudgetItemForm.js';
 import ExpenseList from './ExpenseList.js';
 import IncomeList from './IncomeList.js';
@@ -12,13 +11,17 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			category_options: [],
+			expense_category_options: [],
+			income_category_options: [],
+			expenses: [],
+			incomes: [],
 		}
 	}
 
 	componentDidMount(){
 		document.title = "Life Manager";
 		this.getCategoryOptions();
+		this.update();
 	}
 
 	getCategoryOptions = () => {
@@ -30,11 +33,53 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch('http://localhost:8000/api/categories/', data).then((response) => {
+		fetch('http://localhost:8000/api/expenses/categories/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
-			this.setState({ category_options: result });
+			this.setState({ expense_category_options: result });
 		}).catch(err => { alert(err) })
+		fetch('http://localhost:8000/api/incomes/categories/', data).then((response) => {
+			return response.json();
+		}).then((result) => {
+			this.setState({ income_category_options: result });
+		}).catch(err => { alert(err) })
+	}
+
+	getExpenses = () => {
+		var data = {
+			method: "GET",
+			headers: {
+
+			},
+			mode: 'cors'
+		};
+
+		fetch('http://localhost:8000/api/expenses/', data).then((response) => {
+			return response.json();
+		}).then((result) => {
+			this.setState({ expenses: result });
+		}).catch(err => { alert(err) });
+	}
+
+	getIncomes = () => {
+		var data = {
+			method: "GET",
+			headers: {
+
+			},
+			mode: 'cors'
+		};
+
+		fetch('http://localhost:8000/api/incomes/', data).then((response) => {
+			return response.json();
+		}).then((result) => {
+			this.setState({ incomes: result });
+		}).catch(err => { alert(err) });
+	}
+
+	update = () => {
+		this.getIncomes();
+		this.getExpenses();
 	}
 
 
@@ -45,13 +90,23 @@ class App extends Component {
 					<div className="App">
 						<Row>
 							<Col>
-					    		<BudgetItemForm category_options={ this.state.category_options }/>
+					    		<BudgetItemForm 
+					    			income_category_options={ this.state.income_category_options }
+					    			expense_category_options={ this.state.expense_category_options }
+					    			update={ this.update }
+					    		/>
 					    	</Col>
 					    	<Col>
-					    		<ExpenseList category_options={ this.state.category_options }/>
+					    		<ExpenseList
+					    			category_options={ this.state.expense_category_options }
+					    			expenses={ this.state.expenses }	
+					    		/>
 					    	</Col>
 					    	<Col>
-					    		<IncomeList category_options={ this.state.category_options }/>
+					    		<IncomeList
+					    			category_options={ this.state.income_category_options }
+					    			incomes={ this.state.incomes }
+					    		/>
 					    	</Col>
 				    	</Row>
 					</div>
