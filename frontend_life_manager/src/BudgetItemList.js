@@ -6,29 +6,29 @@ import {
 	TableHeaderColumn,
 	TableRow,
 	TableRowColumn,
-} from 'material-ui/Table'
-import { API_ROOT } from './config.js'
-import IconButton from 'material-ui/IconButton'
+} from 'material-ui/Table';
+import { API_ROOT } from './config.js';
+import IconButton from 'material-ui/IconButton';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import Modal from 'react-responsive-modal';
 import RaisedButton from 'material-ui/RaisedButton';
 
-export default class ExpenseList extends Component {
+export default class BudgetItemList extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			expenses: [],
+			budget_items: [],
 			category_options: [],
 			open_modal: false,
-			expense: { id:-1, description:"hello" }
+			budget_item: { id:-1, description:"hello" }
 		};
 	}
 
 	componentWillReceiveProps(props) {
 		this.setState({
 			category_options: props.category_options,
-			expenses: props.expenses,
+			budget_items: props.budget_items,
 		})
 	}
 
@@ -43,9 +43,9 @@ export default class ExpenseList extends Component {
 		return name;
 	}
 
-	handleClickDelete = (expense) => {
+	handleClickDelete = (budget_item) => {
 		return (event) => {
-			this.openModal(expense);
+			this.openModal(budget_item);
 		}
 	}
 
@@ -58,14 +58,14 @@ export default class ExpenseList extends Component {
 			mode: 'cors',
 		};
 
-		fetch(API_ROOT + '/api/expenses/' + this.state.expense.id + "/", data)
+		fetch(API_ROOT + '/api/' + this.props.type + 's/' + this.state.budget_item.id + "/", data)
 			.then(() => { this.props.update(); })
 			.catch(err => { console.log(err) });
 		this.closeModal();
 	}
 
-	openModal = (expense) => {
-		this.setState({expense:expense, open_modal:true})
+	openModal = (budget_item) => {
+		this.setState({budget_item:budget_item, open_modal:true})
 	}
 
 	closeModal = () => {
@@ -73,33 +73,33 @@ export default class ExpenseList extends Component {
 	}
 
 	renderRows = () => {
-		return this.state.expenses.map((expense) => {
+		return this.state.budget_items.map((budget_item) => {
 			
-			var date = new Date(expense.time);
+			var date = new Date(budget_item.time);
 			var month = "" + (date.getMonth() + 1);
 			if (month.length === 1){
 				month = "0" + month;
 			}
 
 			return (
-				<TableRow key={ expense.id }>
+				<TableRow key={ budget_item.id }>
 					<TableRowColumn>
 						{ month }/{ date.getDate() }/{ date.getYear() }
 					</TableRowColumn>
 					<TableRowColumn>
-						{ expense.description }
+						{ budget_item.description }
 					</TableRowColumn>
 					<TableRowColumn>
-						{ expense.party }
+						{ budget_item.party }
 					</TableRowColumn>
 					<TableRowColumn>
-						${ expense.amount }
+						${ budget_item.amount }
 					</TableRowColumn>
 					<TableRowColumn>
-						{ this.getCategoryOption(expense.category) }
+						{ this.getCategoryOption(budget_item.category) }
 					</TableRowColumn>
 					<TableRowColumn>
-						<IconButton onClick={this.handleClickDelete(expense)}>
+						<IconButton onClick={this.handleClickDelete(budget_item)}>
 							<ContentClear hoverColor="red"/>
 						</IconButton>
 					</TableRowColumn>
@@ -112,12 +112,13 @@ export default class ExpenseList extends Component {
 		return (
 			<div>
 				<Modal open={this.state.open_modal} onClose={this.closeModal} little>
-					<p>Delete {this.state.expense.description} - ${this.state.expense.amount}</p>
+					<p>Delete {this.state.budget_item.description} - ${this.state.budget_item.amount}</p>
 					<RaisedButton label="Confirm" primary={true} onClick={this.onClickConfirm} />
 					&nbsp;&nbsp;&nbsp; 
 					<RaisedButton label="Cancel" secondary={true} onClick={this.closeModal} />
 				</Modal>
-				<Table>
+				<h3>{this.props.title}</h3>
+				<Table fixedHeader={true}>
 					
 					<TableHeader displaySelectAll={false} adjustForCheckbox={false} >
 						<TableRow>

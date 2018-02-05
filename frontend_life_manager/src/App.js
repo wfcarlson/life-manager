@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import BudgetItemForm from './BudgetItemForm.js';
-import ExpenseList from './ExpenseList.js';
-import IncomeList from './IncomeList.js';
+import BudgetItemList from './BudgetItemList.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import AppBar from 'material-ui/AppBar';
@@ -101,29 +100,33 @@ class App extends Component {
 							title="Monthly Budgets"
 							style={barStyle}
 						/>
-						<Grid style={{ paddingTop: 100 }} fluid>
-							<Row center="xs">
-								<Col>
+						<Grid style={{ paddingTop: 75 }} fluid>
+							<Row>
+								<Row>
 						    		<BudgetItemForm 
 						    			income_category_options={ this.state.income_category_options }
 						    			expense_category_options={ this.state.expense_category_options }
 						    			update={ this.update }
 						    		/>
-						    	</Col>
-						    	<Col>
-						    		<IncomeList
+						    	</Row>
+						    	<Row center="xs">
+						    		<BudgetItemList
+						    			title="Incomes"
+						    			type="income"
 						    			category_options={ this.state.income_category_options }
-						    			incomes={ this.state.incomes }
+						    			budget_items={ this.state.incomes }
 						    			update={ this.update }
 						    		/>
-						    	</Col>
-						    	<Col>
-						    		<ExpenseList
+						    	</Row>
+						    	<Row center="xs"  style={{paddingTop:50}}>
+						    		<BudgetItemList
+						    			title="Expenses"
+						    			type="expense"
 						    			category_options={ this.state.expense_category_options }
-						    			expenses={ this.state.expenses }
+						    			budget_items={ this.state.expenses }
 						    			update={ this.update }	
 						    		/>
-						    	</Col>
+						    	</Row>
 					    	</Row>
 						</Grid>
 					</div>
