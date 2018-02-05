@@ -7,6 +7,9 @@ import {
 	TableRow,
 	TableRowColumn,
 } from 'material-ui/Table'
+import { API_ROOT } from './config.js'
+import IconButton from 'material-ui/IconButton'
+import ContentClear from 'material-ui/svg-icons/content/clear';
 
 export default class IncomeList extends Component {
 
@@ -36,6 +39,22 @@ export default class IncomeList extends Component {
 		return name;
 	}
 
+	handleClickDelete = (id) => {
+		return (event) => {
+			var data = {
+				method: "DELETE",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				mode: 'cors',
+			};
+
+			fetch(API_ROOT + '/api/incomes/' + id + "/", data)
+				.then(() => { this.props.update(); })
+				.catch(err => { console.log(err) });
+		}
+	}
+
 	renderRows = () => {
 		return this.state.incomes.map((income) => {
 
@@ -62,6 +81,11 @@ export default class IncomeList extends Component {
 					<TableRowColumn>
 						{ this.getCategoryOption(income.category) }
 					</TableRowColumn>
+					<TableRowColumn>
+						<IconButton onClick={this.handleClickDelete(income.id)}>
+							<ContentClear hoverColor="red"/>
+						</IconButton>
+					</TableRowColumn>
 				</TableRow>
 			);
 		});
@@ -77,6 +101,7 @@ export default class IncomeList extends Component {
 				        <TableHeaderColumn>Vendor</TableHeaderColumn>
 				        <TableHeaderColumn>Amount</TableHeaderColumn>
 				        <TableHeaderColumn>Category</TableHeaderColumn>
+				        <TableHeaderColumn></TableHeaderColumn>
 			        </TableRow>
 				</TableHeader>
 				<TableBody displayRowCheckbox={false}>

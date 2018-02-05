@@ -4,7 +4,16 @@ import ExpenseList from './ExpenseList.js';
 import IncomeList from './IncomeList.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import AppBar from 'material-ui/AppBar';
+import { API_ROOT } from './config.js';
 import './App.css';
+
+
+const barStyle = {
+	position: 'fixed',
+	top: 0
+};
+
 
 class App extends Component {
 
@@ -33,12 +42,12 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch('http://localhost:8000/api/expenses/categories/', data).then((response) => {
+		fetch(API_ROOT + '/api/expenses/categories/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ expense_category_options: result });
 		}).catch(err => { alert(err) })
-		fetch('http://localhost:8000/api/incomes/categories/', data).then((response) => {
+		fetch(API_ROOT + '/api/incomes/categories/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ income_category_options: result });
@@ -54,7 +63,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch('http://localhost:8000/api/expenses/', data).then((response) => {
+		fetch(API_ROOT + '/api/expenses/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ expenses: result });
@@ -70,7 +79,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch('http://localhost:8000/api/incomes/', data).then((response) => {
+		fetch(API_ROOT + '/api/incomes/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ incomes: result });
@@ -82,36 +91,45 @@ class App extends Component {
 		this.getExpenses();
 	}
 
-
 	render() {
 		return (
-			<MuiThemeProvider>
-				<Grid fluid>
-					<div className="App">
-						<Row>
-							<Col>
-					    		<BudgetItemForm 
-					    			income_category_options={ this.state.income_category_options }
-					    			expense_category_options={ this.state.expense_category_options }
-					    			update={ this.update }
-					    		/>
-					    	</Col>
-					    	<Col>
-					    		<ExpenseList
-					    			category_options={ this.state.expense_category_options }
-					    			expenses={ this.state.expenses }	
-					    		/>
-					    	</Col>
-					    	<Col>
-					    		<IncomeList
-					    			category_options={ this.state.income_category_options }
-					    			incomes={ this.state.incomes }
-					    		/>
-					    	</Col>
-				    	</Row>
+			<div className="App">
+				<MuiThemeProvider>
+					<div>
+						<AppBar
+							showMenuIconButton={false} 
+							title="Monthly Budgets"
+							style={barStyle}
+						/>
+						<Grid style={{ paddingTop: 100 }} fluid>
+							<Row center="xs">
+								<Col>
+						    		<BudgetItemForm 
+						    			income_category_options={ this.state.income_category_options }
+						    			expense_category_options={ this.state.expense_category_options }
+						    			update={ this.update }
+						    		/>
+						    	</Col>
+						    	<Col>
+						    		<IncomeList
+						    			category_options={ this.state.income_category_options }
+						    			incomes={ this.state.incomes }
+						    			update={ this.update }
+						    		/>
+						    	</Col>
+						    	<Col>
+						    		<ExpenseList
+						    			category_options={ this.state.expense_category_options }
+						    			expenses={ this.state.expenses }
+						    			update={ this.update }	
+						    		/>
+						    	</Col>
+					    	</Row>
+						</Grid>
 					</div>
-				</Grid>
-			</MuiThemeProvider>
+				</MuiThemeProvider>
+			</div>
+
 		);
 	}
 }

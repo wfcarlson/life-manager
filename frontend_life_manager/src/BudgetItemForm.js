@@ -4,6 +4,7 @@ import DatePicker from 'material-ui/DatePicker';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
 import { Row } from 'react-flexbox-grid';
+import { API_ROOT } from './config.js';
 
 export default class BudgetItemForm extends Component {
 
@@ -64,7 +65,6 @@ export default class BudgetItemForm extends Component {
 	}
 
 	handleSubmit = () => {
-		console.log(this.state.time);
 		var budgetItem = {
 			amount: this.state.amount,
 			category: this.state.category,
@@ -82,7 +82,7 @@ export default class BudgetItemForm extends Component {
 			body: JSON.stringify(budgetItem),
 		};
 
-		fetch('http://localhost:8000/api/' + this.state.type + 's/', data)
+		fetch(API_ROOT + '/api/' + this.state.type + 's/', data)
 			.then(() => { this.props.update(); })
 			.catch(err => { console.log(err) });
 	
