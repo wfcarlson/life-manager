@@ -156,7 +156,7 @@ export default class BudgetItemForm extends Component {
 				<Modal open={this.state.open_category_modal} onClose={this.closeCategoryModal} little>
 					<CategoryForm type={this.state.type} close={this.closeCategoryModal} update={this.props.updateCategories} setCategory={this.setCategory} />
 				</Modal>
-				<FloatingActionButton onClick={this.openBudgetItemModal} style={{ marginLeft:25, marginTop:25 }}>
+				<FloatingActionButton onClick={this.openBudgetItemModal} style={{ margin:25 }}>
 					<ContentAdd />
 				</FloatingActionButton>
 				<Modal open={this.state.open_budget_item_modal} onClose={this.closeBudgetItemModal} little>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BudgetItemForm from './BudgetItemForm.js';
 import BudgetItemList from './BudgetItemList.js';
+import TotalsView from './TotalsView.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Grid, Row } from 'react-flexbox-grid';
 import AppBar from 'material-ui/AppBar';
@@ -113,6 +114,10 @@ class App extends Component {
 										update={ this.update }
 										updateCategories={ this.updateCategories }
 						    		/>
+									<TotalsView 
+										income_category_options={ this.state.income_category_options }
+										expense_category_options={ this.state.expense_category_options }
+									/>
 						    	</Row>
 						    	<Row center="xs">
 						    		<BudgetItemList

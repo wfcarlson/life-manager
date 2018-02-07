@@ -29,7 +29,7 @@ export default class BudgetItemList extends Component {
 		this.setState({
 			category_options: props.category_options,
 			budget_items: props.budget_items,
-		})
+		});
 	}
 
 	getCategoryOption = (pk) => {
