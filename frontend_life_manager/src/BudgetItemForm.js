@@ -8,7 +8,7 @@ import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
 import { Row } from 'react-flexbox-grid';
 import { API_ROOT } from './config.js';
-import BudgetItemTypeForm from './BudgetItemTypeForm.js';
+import CategoryForm from './CategoryForm.js';
 
 
 export default class BudgetItemForm extends Component {
@@ -154,7 +154,7 @@ export default class BudgetItemForm extends Component {
 		return (
 			<div>
 				<Modal open={this.state.open_category_modal} onClose={this.closeCategoryModal} little>
-					<BudgetItemTypeForm type={this.state.type} close={this.closeCategoryModal} update={this.props.updateCategories} setCategory={this.setCategory} />
+					<CategoryForm type={this.state.type} close={this.closeCategoryModal} update={this.props.updateCategories} setCategory={this.setCategory} />
 				</Modal>
 				<FloatingActionButton onClick={this.openBudgetItemModal} style={{ marginLeft:25, marginTop:25 }}>
 					<ContentAdd />
