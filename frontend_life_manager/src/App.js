@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import BudgetItemForm from './BudgetItemForm.js';
 import BudgetItemList from './BudgetItemList.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { Grid, Row, Col } from 'react-flexbox-grid';
+import { Grid, Row } from 'react-flexbox-grid';
 import AppBar from 'material-ui/AppBar';
 import { API_ROOT } from './config.js';
 import './App.css';

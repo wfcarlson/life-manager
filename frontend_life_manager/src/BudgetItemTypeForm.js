@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import Modal from 'react-responsive-modal';
 import RaisedButton from 'material-ui/RaisedButton';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator } from 'react-material-ui-form-validator';
-import { MenuItem } from 'material-ui'
 import { API_ROOT } from './config.js';
 import { Row } from 'react-flexbox-grid';
 
