@@ -90,6 +90,10 @@ class App extends Component {
 		this.getExpenses();
 	}
 
+	updateCategories = () => {
+		this.getCategoryOptions();
+	}
+
 	render() {
 		return (
 			<div className="App">
@@ -106,7 +110,8 @@ class App extends Component {
 						    		<BudgetItemForm 
 						    			income_category_options={ this.state.income_category_options }
 						    			expense_category_options={ this.state.expense_category_options }
-						    			update={ this.update }
+										update={ this.update }
+										updateCategories={ this.updateCategories }
 						    		/>
 						    	</Row>
 						    	<Row center="xs">

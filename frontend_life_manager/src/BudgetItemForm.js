@@ -8,6 +8,8 @@ import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator, SelectValidator } from 'react-material-ui-form-validator';
 import { Row } from 'react-flexbox-grid';
 import { API_ROOT } from './config.js';
+import BudgetItemTypeForm from './BudgetItemTypeForm.js';
+
 
 export default class BudgetItemForm extends Component {
 
@@ -22,7 +24,8 @@ export default class BudgetItemForm extends Component {
 			type: "expense",
 			income_category_options: [],
 			expense_category_options: [],
-			open_modal: false
+			open_budget_item_modal: false,
+			open_category_modal: false
 		};
 	}
 
@@ -62,9 +65,11 @@ export default class BudgetItemForm extends Component {
 
 	handleSelectChange = (attribute) => {
 		return (event, index, value) => {
-			var obj = {};
-			obj[attribute] = value;
-			this.setState(obj);
+			if (value !== -1) {
+				var obj = {};
+				obj[attribute] = value;
+				this.setState(obj);
+			}
 		}
 	}
 
@@ -98,8 +103,8 @@ export default class BudgetItemForm extends Component {
 		};
 
 		fetch(API_ROOT + '/api/' + this.state.type + 's/', data)
-			.then(() => { this.clearItem(); this.props.update(); this.closeModal(); })
-			.catch(err => { console.log(err); this.closeModal(); });
+			.then(() => { this.clearItem(); this.props.update(); this.closeBudgetItemModal(); })
+			.catch(err => { console.log(err); this.closeBudgetItemModal(); });
 	
 	}
 
@@ -113,35 +118,56 @@ export default class BudgetItemForm extends Component {
 	}
 
 	renderCategoryOptions = () => {
-		return (this.state.type === "income") ? (this.state.income_category_options.map((option) => {
+		var options = (this.state.type === "income") ? (this.state.income_category_options.map((option) => {
 			return (<MenuItem key={option.id} value={option.id} primaryText={option.name} />);
 		}))
 		:
 		(this.state.expense_category_options.map((option) => {
 			return (<MenuItem key={option.id} value={option.id} primaryText={option.name} />);
 		}));
+		options.push(<MenuItem key={-1} value={-1} primaryText="Add New Category" leftIcon={<ContentAdd />} onClick={this.addNewCategory} />		
+					);
+		return options;
 	}
 
-	openModal = () => {
-		this.setState({open_modal:true});
+	addNewCategory = () => {
+		this.setState({open_category_modal:true});
 	}
 
-	closeModal = () => {
-		this.setState({open_modal:false})
+	openBudgetItemModal = () => {
+		this.setState({open_budget_item_modal:true});
+	}
+
+	closeBudgetItemModal = () => {
+		this.setState({open_budget_item_modal:false});
+	}
+
+	closeCategoryModal = () => {
+		this.setState({open_category_modal:false});
+	}
+
+	setCategory = (val) => {
+		this.setState({category:val});
 	}
 
 	render() {
 		return (
 			<div>
-				<FloatingActionButton onClick={this.openModal} style={{ marginLeft:25, marginTop:25 }}>
+				<Modal open={this.state.open_category_modal} onClose={this.closeCategoryModal} little>
+					<BudgetItemTypeForm type={this.state.type} close={this.closeCategoryModal} update={this.props.updateCategories} setCategory={this.setCategory} />
+				</Modal>
+				<FloatingActionButton onClick={this.openBudgetItemModal} style={{ marginLeft:25, marginTop:25 }}>
 					<ContentAdd />
 				</FloatingActionButton>
-				<Modal open={this.state.open_modal} onClose={this.closeModal} little>
+				<Modal open={this.state.open_budget_item_modal} onClose={this.closeBudgetItemModal} little>
 					<ValidatorForm
 						ref="form"
 						onSubmit={this.handleSubmit}
 						onError={errors => console.log(errors)}
 					>
+						<Row>
+							<h4>New Budget Item</h4>
+						</Row>
 						<Row>
 							<RadioButtonGroup name="budget_item_type" defaultSelected="expense" onChange={this.handleChange('type')}>
 								<RadioButton name="income" value="income" label="Income" />
