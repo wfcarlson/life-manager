@@ -1,5 +1,5 @@
 from django.conf.urls import url, include
-from views import ExpenseView, IncomeView, ExpenseListView, IncomeListView, ExpenseCategoryView, IncomeCategoryView
+from views import ExpenseView, IncomeView, ExpenseListView, IncomeListView, ExpenseCategoryView, IncomeCategoryView, TotalsView
 
 urlpatterns = [
 	url(r'^expenses/categories/', ExpenseCategoryView.as_view(), name='expense_categories'),
@@ -8,4 +8,5 @@ urlpatterns = [
 	url(r'^expenses/(?P<pk>\d+)/', ExpenseView.as_view(), name='expense'),
     url(r'^expenses/', ExpenseListView.as_view(), name='expenses'),
     url(r'^incomes/', IncomeListView.as_view(), name='incomes'),
+	url(r'^totals/', TotalsView.as_view(), name='totals'),
 ]
