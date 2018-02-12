@@ -3,7 +3,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { ValidatorForm } from 'react-form-validator-core';
 import { TextValidator } from 'react-material-ui-form-validator';
 import { API_ROOT } from './config.js';
-import { Row } from 'react-flexbox-grid';
+import { Row, Col } from 'react-flexbox-grid';
 
 export default class CategoryForm extends Component {
     constructor(props) {
@@ -20,10 +20,6 @@ export default class CategoryForm extends Component {
             type: props.type,
 		});
     }
-
-    //componentDidMount() {
-    //    this.focus();
-    //}
 
     componentWillUpdate(props) {
 		this.state.type = props.type;
@@ -63,14 +59,10 @@ export default class CategoryForm extends Component {
     submit = () => {
 
     }
-
-    //focus() {
-    //    this.refs.textInput.focus();
-    //}
     
     render() {
         return (
-            <div>
+            <Col xs={4}>
                 <Row>
                     <h4>New Category</h4>
                 </Row>
@@ -83,14 +75,13 @@ export default class CategoryForm extends Component {
                             value={this.state.name}
                             validators={['required']}
                             errorMessages={'this field is required'}
-                            //ref="textInput"
                         />
                     </ValidatorForm>
                 </Row>
                 <Row end="xs">
 		            <RaisedButton onClick={this.handleClickSave} label="Submit" primary={true} />
 		        </Row>
-            </div>
+            </Col>
         );
     }
 
