@@ -6,6 +6,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import AppBar from 'material-ui/AppBar';
 import { API_ROOT } from './config.js';
+import DateNavigation from './DateNavigation.js';
 import './App.css';
 
 
@@ -19,11 +20,14 @@ class App extends Component {
 
 	constructor(props) {
 		super(props);
+		var date = new Date();
 		this.state = {
 			expense_category_options: [],
 			income_category_options: [],
 			expenses: [],
 			incomes: [],
+			year: date.getFullYear(),
+			month: date.getMonth() + 1,
 		}
 	}
 
@@ -63,7 +67,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch(API_ROOT + '/api/expenses/', data).then((response) => {
+		fetch(API_ROOT + '/api/expenses/' + this.state.year + '/' + this.state.month + '/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ expenses: result });
@@ -79,7 +83,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch(API_ROOT + '/api/incomes/', data).then((response) => {
+		fetch(API_ROOT + '/api/incomes/' + this.state.year + '/' + this.state.month + '/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ incomes: result });
@@ -141,6 +145,9 @@ class App extends Component {
 									budget_items={ this.state.expenses }
 									update={ this.update }	
 								/>
+							</Row>
+							<Row>
+								<DateNavigation />
 							</Row>
 						</Grid>
 					</div>

@@ -13,14 +13,15 @@ class Category(models.Model):
 	def __str__(self):
 		return self.name
 
+
 class IncomeCategory(Category):
 	class Meta:
 		verbose_name_plural = "Income Categories"
 
+
 class ExpenseCategory(Category):
 	class Meta:
 		verbose_name_plural = "Expense Categories"
-
 
 
 class BudgetItem(models.Model):

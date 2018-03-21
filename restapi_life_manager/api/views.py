@@ -9,6 +9,15 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+class ExpenseView(APIView):
+
+    def delete(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        expense.delete()
+        serializer = ExpenseSerializer(expense)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ExpenseListView(APIView):
 
     def get(self, request, format=None):
@@ -25,12 +34,11 @@ class ExpenseListView(APIView):
     	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ExpenseView(APIView):
+class MonthExpenseListView(APIView):
 
-    def delete(self, request, pk):
-        expense = get_object_or_404(Expense, pk=pk)
-        expense.delete()
-        serializer = ExpenseSerializer(expense)
+    def get(self, request, year, month, format=None):
+        expenses = Expense.objects.filter(time__year=year, time__month=month)
+        serializer = ExpenseSerializer(expenses, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -58,6 +66,15 @@ class IncomeListView(APIView):
     		return Response(serializer.data, status=status.HTTP_201_CREATED)
     	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class MonthIncomeListView(APIView):
+
+    def get(self, request, year, month, format=None):
+        incomes = Income.objects.filter(time__year=year, time__month=month)
+        serializer = IncomeSerializer(incomes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ExpenseCategoryView(APIView):
 
     def get(self, request, format=None):
@@ -71,6 +88,7 @@ class ExpenseCategoryView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class IncomeCategoryView(APIView):
 
@@ -86,13 +104,14 @@ class IncomeCategoryView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class TotalsView(APIView):
 
-    def get(self, request, format=None):
+    def get(self, request, year, month, format=None):
         income_categories = IncomeCategory.objects.all()
         expense_categories = ExpenseCategory.objects.all()
-        expenses = Expense.objects.all()
-        incomes = Income.objects.all()
+        expenses = Expense.objects.filter(time__year=year, time__month=month)
+        incomes = Income.objects.filter(time__year=year, time__month=month)
 
         expense_totals = {}
         for cat in expense_categories:
