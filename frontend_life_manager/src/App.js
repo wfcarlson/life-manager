@@ -6,8 +6,9 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import AppBar from 'material-ui/AppBar';
 import { API_ROOT } from './config.js';
-import DateNavigation from './DateNavigation.js';
+import MonthNavigation from './MonthNavigation.js';
 import './App.css';
+import { getMonthString } from './utils.js';
 
 
 const barStyle = {
@@ -15,26 +16,40 @@ const barStyle = {
 	top: 0
 };
 
-
 class App extends Component {
 
 	constructor(props) {
 		super(props);
-		var date = new Date();
 		this.state = {
 			expense_category_options: [],
 			income_category_options: [],
 			expenses: [],
 			incomes: [],
-			year: date.getFullYear(),
-			month: date.getMonth() + 1,
+			date: new Date(),
+			start_date: new Date(),
 		}
+		this.getStartDate();
+		this.getCategoryOptions();
 	}
 
 	componentDidMount(){
 		document.title = "Life Manager";
-		this.getCategoryOptions();
 		this.update();
+	}
+
+	getStartDate = () => {
+		var data = {
+			method: "GET",
+			headers: {
+
+			},
+			mode: 'cors'
+		};
+		fetch(API_ROOT + '/api/start_date/', data).then((response) => {
+			return response.json();
+		}).then((result) => {
+			this.setState({ start_date: new Date(result.date) });
+		}).catch(err => { alert(err) })
 	}
 
 	getCategoryOptions = () => {
@@ -67,7 +82,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch(API_ROOT + '/api/expenses/' + this.state.year + '/' + this.state.month + '/', data).then((response) => {
+		fetch(API_ROOT + '/api/expenses/' + this.state.date.getFullYear() + '/' + (this.state.date.getMonth() + 1) + '/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ expenses: result });
@@ -83,7 +98,7 @@ class App extends Component {
 			mode: 'cors'
 		};
 
-		fetch(API_ROOT + '/api/incomes/' + this.state.year + '/' + this.state.month + '/', data).then((response) => {
+		fetch(API_ROOT + '/api/incomes/' + this.state.date.getFullYear() + '/' + (this.state.date.getMonth() + 1) + '/', data).then((response) => {
 			return response.json();
 		}).then((result) => {
 			this.setState({ incomes: result });
@@ -99,24 +114,30 @@ class App extends Component {
 		this.getCategoryOptions();
 	}
 
-	changePage = () => {
-		console.log('change page');
+	setDate = (date) => {
+		this.setState({
+			date: new Date(date.getTime())
+		}, () => { this.update() })
 	}
 
 	render() {
+		var title = "Monthly Budget - " + getMonthString(this.state.date.getMonth());
+		if (new Date().getFullYear() > this.state.date.getFullYear()) {
+			title = title + " " + this.state.date.getFullYear();
+		}
+
 		return (
 			<div className="App">
 				<MuiThemeProvider>
 					<div>
 						<AppBar
 							showMenuIconButton={false} 
-							title="Monthly Budgets"
+							title={title}
 							style={barStyle}
 						/>
 						<Grid style={{ paddingTop: 75 }} fluid>
-							<Col lg={12} xs={12} >
 							<Row>
-								<Col lg={2} xs={12}>
+								<Col lg={1} xs={12}>
 									<BudgetItemForm 
 										income_category_options={ this.state.income_category_options }
 										expense_category_options={ this.state.expense_category_options }
@@ -124,14 +145,14 @@ class App extends Component {
 										updateCategories={ this.updateCategories }
 									/>
 								</Col>
-								<Col lg={10} xs={12}>
+								<Col lg={11} xs={12}>
 									<TotalsView 
 										income_category_options={ this.state.income_category_options }
 										expense_category_options={ this.state.expense_category_options }
+										date={ this.state.date }
 									/>
 								</Col>
-								</Row>
-							</Col>
+							</Row>
 							<Row center="xs">
 								<BudgetItemList
 									title="Incomes"
@@ -150,8 +171,8 @@ class App extends Component {
 									update={ this.update }	
 								/>
 							</Row>
-							<Row>
-								<DateNavigation items={this.state.expenses} initialPage={1} onChangePage={this.changePage} />
+							<Row center="xs"  style={{paddingTop:50}}>
+								<MonthNavigation setDate={this.setDate} selected_date={new Date(this.state.date.getTime())} start_date={new Date(this.state.start_date.getTime())}/>
 							</Row>
 						</Grid>
 					</div>

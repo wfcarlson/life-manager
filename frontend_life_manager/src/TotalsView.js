@@ -7,6 +7,7 @@ import { List, ListItem } from 'material-ui/List';
 import { API_ROOT } from './config.js';
 
 export default class TotalsView extends Component {
+    
     constructor(props) {
         super(props);
         this.state = {
@@ -23,15 +24,17 @@ export default class TotalsView extends Component {
                 expenses: {
 
                 }
-            }
+            },
+            date: new Date(),
 		};
     }
 
     componentWillReceiveProps(props) {
 		this.setState({
-			income_category_options: props.income_category_options ,
-			expense_category_options: props.expense_category_options 
-		});
+			income_category_options: props.income_category_options,
+            expense_category_options: props.expense_category_options,
+            date: props.date 
+		}, () => this.getData());
     }
 
     componentDidMount() {
@@ -47,7 +50,7 @@ export default class TotalsView extends Component {
 			mode: 'cors',
         };
         
-        fetch(API_ROOT + '/api/totals/')
+        fetch(API_ROOT + '/api/totals/' + this.state.date.getFullYear() + '/' + (this.state.date.getMonth() + 1) + '/')
         .then((data) => { 
             data.json()
                 .then((data) => { 
@@ -138,11 +141,13 @@ export default class TotalsView extends Component {
                         >
                             <Row>
                                 <Col xs={6} lg={4}>
+                                    <h4>Incomes</h4>
                                     <List>
                                         {this.renderCategoryTotals(this.state.data.incomes)}
                                     </List>
                                 </Col>
                                 <Col xs={6} lg={4}>
+                                    <h4>Expenses</h4>
                                     <List>
                                         {this.renderCategoryTotals(this.state.data.expenses)}
                                     </List>

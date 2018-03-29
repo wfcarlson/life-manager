@@ -143,5 +143,14 @@ class TotalsView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
-        
+
+class StartDateView(APIView):
+    def get(self, request):
+        first_income = Income.objects.all().order_by('time').first()
+        first_expense = Expense.objects.all().order_by('time').first()
+        if first_income.time < first_expense.time:
+            date = first_income.time
+        else:
+            date = first_expense.time
+        return Response({"date": date}, status=status.HTTP_200_OK)
 

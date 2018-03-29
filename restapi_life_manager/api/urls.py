@@ -11,4 +11,5 @@ urlpatterns = [
 	url(r'^expenses/', ExpenseListView.as_view(), name='expenses'),
     url(r'^incomes/', IncomeListView.as_view(), name='incomes'),
 	url(r'^totals/(?P<year>\d+)/(?P<month>\d+)/', TotalsView.as_view(), name='totals'),
+	url(r'^start_date/', StartDateView.as_view(), name='start_date'),
 ]
