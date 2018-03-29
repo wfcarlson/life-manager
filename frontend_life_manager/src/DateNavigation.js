@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Pagination from './Pagination.js';
+import PaginationApp from './PaginationApp.js';
 
 
 export default class DateNavigation extends Component {
@@ -7,8 +7,14 @@ export default class DateNavigation extends Component {
     constructor(props) {
       super(props);
       this.state = {
-      
+        items: [],
       }
+    }
+
+    componentWillReceiveProps(props) {
+      this.setState({
+        items: props.items
+      });
     }
 
     renderMonths(){
@@ -25,14 +31,18 @@ export default class DateNavigation extends Component {
       });
     }
 
+    onChangePage = () => {
+
+    }
+    //<div style={{width:"504px", height:"30px", border:"1px solid rgb(0, 188, 212)"}}>
+    //{this.renderMonths()}
+    //</div>
     render() {
       var url = "http://jasonwatmore.com/post/2017/03/14/react-pagination-example-with-logic-like-google"
       return (
         <div>
-        <div style={{width:"504px", height:"30px", border:"1px solid rgb(0, 188, 212)"}}>
-          {this.renderMonths()}
-        </div>
-        <Pagination />
+        
+        <PaginationApp />
         </div>
       );
     }

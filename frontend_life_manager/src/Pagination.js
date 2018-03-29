@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
  
 const propTypes = {
     items: PropTypes.array.isRequired,
@@ -29,6 +30,12 @@ class Pagination extends React.Component {
             this.setPage(this.props.initialPage);
         }
     }
+
+    componentWillRecieveProps(props) {
+        this.setState({
+            items: props.items
+        });
+    }
  
     setPage(page) {
         var items = this.props.items;
@@ -57,7 +64,6 @@ class Pagination extends React.Component {
  
         // default page size is 10
         pageSize = pageSize || 10;
- 
         // calculate total pages
         var totalPages = Math.ceil(totalItems / pageSize);
  
@@ -85,7 +91,7 @@ class Pagination extends React.Component {
         var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
  
         // create an array of pages to ng-repeat in the pager control
-        var pages = _.range(startPage, endPage + 1);
+        var pages = this.range(startPage, endPage + 1);
  
         // return object with all pager properties required by the view
         return {
@@ -99,6 +105,14 @@ class Pagination extends React.Component {
             endIndex: endIndex,
             pages: pages
         };
+    }
+
+    range = (start, end) => {
+        var ans = [];
+        for (let i = start; i <= end; i++) {
+            ans.push(i);
+        }
+        return ans;
     }
  
     render() {

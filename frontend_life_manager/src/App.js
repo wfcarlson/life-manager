@@ -99,6 +99,10 @@ class App extends Component {
 		this.getCategoryOptions();
 	}
 
+	changePage = () => {
+		console.log('change page');
+	}
+
 	render() {
 		return (
 			<div className="App">
@@ -147,7 +151,7 @@ class App extends Component {
 								/>
 							</Row>
 							<Row>
-								<DateNavigation />
+								<DateNavigation items={this.state.expenses} initialPage={1} onChangePage={this.changePage} />
 							</Row>
 						</Grid>
 					</div>
