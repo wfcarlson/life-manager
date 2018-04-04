@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import PaginationApp from './PaginationApp.js';
-
 
 export default class MonthNavigation extends Component {
 
