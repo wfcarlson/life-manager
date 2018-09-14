@@ -29,7 +29,7 @@ class BudgetItem(models.Model):
 	time = models.DateTimeField(blank=False, null=False)
 	description = models.CharField(max_length=250, null=False, blank=False)
 	party = models.CharField(max_length=50, null=False, blank=False)
-
+	transaction_id = models.CharField(max_length=50, null=True)
 	class Meta:
 		abstract = True
 
