@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from views import *
 
 urlpatterns = [
+	url(r'^bank/', include('bank_integration.urls')),
 	url(r'^expenses/categories/', ExpenseCategoryView.as_view(), name='expense_categories'),
 	url(r'^incomes/categories/', IncomeCategoryView.as_view(), name='income_categories'),
 	url(r'^expenses/(?P<year>\d+)/(?P<month>\d+)/', MonthExpenseListView.as_view(), name='month_expenses'),
